@@ -35,9 +35,9 @@ jobs:
       # - run: bun test:types
 
       - name: Publish to npm
-        run: npm publish --provenance --access public  # 发布公开包
+        run: npm publish --provenance --access public
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}  # 引用配置的 Token
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       
 
   # test:
