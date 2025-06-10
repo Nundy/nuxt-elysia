@@ -26,10 +26,11 @@ jobs:
         with:
           node-version: latest
           registry-url: 'https://registry.npmjs.org'  # 指定 npm 官方源
-      # - run: npm install -g bun
+      - run: npm install -g bun
       - run: npm cache clean --force
-      - run: npm install
-      - run: npm run prepare
+      - run: bun pm cache rm
+      - run: bun install
+      - run: bun prepare
       # - run: bun test:types
 
       - name: Publish to npm
