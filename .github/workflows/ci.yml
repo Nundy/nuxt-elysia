@@ -15,6 +15,10 @@ on:
   #     - main
   workflow_dispatch:  # 新增手动触发
 
+# 添加权限配置
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   lint:
