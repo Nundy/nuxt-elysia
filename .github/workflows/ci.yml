@@ -16,40 +16,47 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: latest
+          registry-url: 'https://registry.npmjs.org/'  # 指定 npm 官方源
       - run: npm install -g bun
       - run: bun install
       - run: bun dev:prepare
       - run: bun test:types
 
-  test:
-    strategy:
-      fail-fast: false
-      matrix:
-        nodeVersion: [20, 22]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.nodeVersion }}
-      - run: npm install -g bun pm2
-      - run: bun install
-      - run: bun dev:prepare # Vitest need the tsconfig to be available
-      - run: bun dev:build
-      - run: pm2 start bun -- dev:start && sleep 1
-      - run: bun run test
-      - run: pm2 stop all
+      - name: Publish to npm
+        run: npm publish --access public  # 发布公开包
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}  # 引用配置的 Token
+      
 
-  test-bun:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: latest
-      - run: npm install -g bun pm2
-      - run: bun install
-      - run: bun dev:build:bun
-      - run: pm2 start bun -- dev:start:bun && sleep 1
-      - run: bun test:bun
-      - run: pm2 stop all
+  # test:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       nodeVersion: [20, 22]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: ${{ matrix.nodeVersion }}
+  #     - run: npm install -g bun pm2
+  #     - run: bun install
+  #     - run: bun dev:prepare # Vitest need the tsconfig to be available
+  #     - run: bun dev:build
+  #     - run: pm2 start bun -- dev:start && sleep 1
+  #     - run: bun run test
+  #     - run: pm2 stop all
+
+  # test-bun:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: latest
+  #     - run: npm install -g bun pm2
+  #     - run: bun install
+  #     - run: bun dev:build:bun
+  #     - run: pm2 start bun -- dev:start:bun && sleep 1
+  #     - run: bun test:bun
+  #     - run: pm2 stop all

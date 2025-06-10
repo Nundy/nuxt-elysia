@@ -1,4 +1,7 @@
-# nuxt-elysia
+# nuxt-elysia-custom
+[tkesgar/nuxt-elysia]: https://github.com/tkesgar/nuxt-elysia
+## thanks
+[fork from][tkesgar/nuxt-elysia]
 
 > Use Elysia app in Nuxt;
 

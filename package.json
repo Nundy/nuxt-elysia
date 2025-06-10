@@ -1,8 +1,12 @@
 {
-  "name": "nuxt-elysia",
-  "version": "0.2.0",
+  "name": "nuxt-elysia-custom",
+  "version": "0.3.0",
+  "private": false,
   "description": "Mount Elysia app in Nuxt",
-  "repository": "tkesgar/nuxt-elysia",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Nundy/nuxt-elysia.git"
+  },
   "license": "MIT",
   "type": "module",
   "exports": {
