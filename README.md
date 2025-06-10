@@ -3,7 +3,7 @@
 ## thanks
 ## fork from[tkesgar/nuxt-elysia][tkesgar/nuxt-elysia]
 
-> Use Elysia app in Nuxt
+> Use Elysia app in Nuxt;
 
 ## Features
 
