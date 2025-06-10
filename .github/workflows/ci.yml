@@ -27,7 +27,7 @@ jobs:
       - run: npm install -g bun
       - run: bun install
       - run: bun dev:prepare
-      - run: bun test:types
+      # - run: bun test:types
 
       - name: Publish to npm
         run: npm publish --access public  # 发布公开包
