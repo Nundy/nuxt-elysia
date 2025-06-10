@@ -1,6 +1,6 @@
 # nuxt-elysia
 
-> Use Elysia app in Nuxt
+> Use Elysia app in Nuxt;
 
 ## Features
 
@@ -53,16 +53,16 @@ Add to modules list in `nuxt.config.ts`:
 export default defineNuxtConfig({
   modules: [
     // ...
-	  'nuxt-elysia'
-  ]
-})
+    "nuxt-elysia",
+  ],
+});
 ```
 
 Create `api.ts` in the project root:
 
 ```ts
-export default () => new Elysia()
-  .get('/hello', () => ({ message: 'Hello world!' }))
+export default () =>
+  new Elysia().get("/hello", () => ({ message: "Hello world!" }));
 ```
 
 Use in Vue app:
@@ -74,29 +74,30 @@ Use in Vue app:
   </div>
 </template>
 <script setup lang="ts">
-const { $api } = useNuxtApp()
+const { $api } = useNuxtApp();
 
 const { data: helloMessage } = await useAsyncData(async () => {
-  const { data, error } = await $api.hello.get()
-  
+  const { data, error } = await $api.hello.get();
+
   // Due to Eden Treaty's type safety, you need to handle if `error` is truthy:
   // https://elysiajs.com/eden/treaty/response.html#response
   //
   // Throwing an error here will make it available in the `useAsyncData` error.
   //
   if (error) {
-    throw new Error('Failed to call API')
+    throw new Error("Failed to call API");
   }
-  
-  return data.message
-})
+
+  return data.message;
+});
 </script>
 ```
 
 ## Module options
 
 <!-- Copy from ModuleOptions in src/module.ts -->
-```ts
+
+````ts
 export interface ModuleOptions {
   /**
    * Specifies the module that exports the Elysia app factory function.
@@ -107,7 +108,7 @@ export interface ModuleOptions {
    *
    * Default: `~~/api`
    */
-  module: string
+  module: string;
   /**
    * Specifies the path to mount the Elysia app.
    * 
@@ -117,13 +118,13 @@ export interface ModuleOptions {
    *
    * Default: `/_api`
    */
-  path: string
+  path: string;
   /**
    * Whether to enable Eden Treaty plugin.
    *
    * Default: `true`
    */
-  treaty: boolean
+  treaty: boolean;
   /**
    * When mounting the Elysia app in Bun, Elysia handler that returns a string
    * will not have any `Content-Type` header:
@@ -137,7 +138,7 @@ export interface ModuleOptions {
    *
    * Default: `true`
    */
-  fixBunPlainTextResponse: boolean
+  fixBunPlainTextResponse: boolean;
   /**
    * Provides the list of request headers to be sent to the Elysia app on
    * server-side requests.
@@ -147,9 +148,9 @@ export interface ModuleOptions {
    *
    * Default: `['Cookie']`
    */
-  treatyRequestHeaders: string[] | false
+  treatyRequestHeaders: string[] | false;
 }
-```
+````
 
 ## Notes
 
@@ -179,15 +180,15 @@ Other paths you can use:
 export default defineNuxtConfig({
   nuxtElysia: {
     // Custom alias
-    module: '#api',
+    module: "#api",
     // Module in other package
-    module: '@my-org/my-package',
+    module: "@my-org/my-package",
     // Absolute path
-    module: '/absolute/path/to/module',
+    module: "/absolute/path/to/module",
     // Generated module (from other Nuxt module)
-    module: '~~/.nuxt/my-generated-module',
-  }
-})
+    module: "~~/.nuxt/my-generated-module",
+  },
+});
 ```
 
 ### Only mount in development
@@ -198,10 +199,10 @@ To only mount the app in development, use `import.meta.dev` (which will be
 ```ts
 export default defineNuxtConfig({
   nuxtElysia: {
-    module: '@my-org/my-server-app',
-    path: import.meta.dev ? '/_api' : ''
-  }
-})
+    module: "@my-org/my-server-app",
+    path: import.meta.dev ? "/_api" : "",
+  },
+});
 ```
 
 ```ts
@@ -261,12 +262,12 @@ properly by the default preset:
 ```json
 {
   "exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"bun": "./dist/bun/index.js",
-			"import": "./dist/index.mjs",
-			"require": "./dist/cjs/index.js"
-		}
+    ".": {
+      "types": "./dist/index.d.ts",
+      "bun": "./dist/bun/index.js",
+      "import": "./dist/index.mjs",
+      "require": "./dist/cjs/index.js"
+    }
   }
 }
 ```
@@ -325,7 +326,7 @@ The benchmark Nuxt app is available in `test/fixtures/benchmark`.
 
 We run the tests using `bombardier` on the following machine:
 
-```
+``````
                           ./+o+-       tkesgar@tkesgar-ideapad
                   yyyyy- -yyyyyy+      OS: Ubuntu 24.04 noble(on the Windows Subsystem for Linux)
                ://+//////-yyyyyyo      Kernel: x86_64 Linux 5.15.167.4-microsoft-standard-WSL2
@@ -344,7 +345,7 @@ We run the tests using `bombardier` on the following machine:
                /osyyyyyyo++ooo+++/
                    ````` +oo+++o\:
                           `oo++.
-```
+``````
 
 Result:
 
@@ -388,18 +389,19 @@ Development steps:
 5. Run lint: `bun lint`
 6. Run typecheck: `bun test:types`
 7. Testing:
-  - Testing in Node.js:
-    1. Run `bun dev` in separate terminal
-    2. Run `bun test`
-  - Testing in Bun:
-    1. Run `bun dev:bun` in separate terminal
-    2. Run `bun test`
-  - Test building output:
-    - Node.js: `bun dev:build`
-    - Bun: `bun dev:build:bun`
-  - Running built output:
-    - Node.js: `bun dev:start`
-    - Bun: `bun dev:start:bun`
+
+- Testing in Node.js:
+  1. Run `bun dev` in separate terminal
+  2. Run `bun test`
+- Testing in Bun:
+  1. Run `bun dev:bun` in separate terminal
+  2. Run `bun test`
+- Test building output:
+  - Node.js: `bun dev:build`
+  - Bun: `bun dev:build:bun`
+- Running built output:
+  - Node.js: `bun dev:start`
+  - Bun: `bun dev:start:bun`
 
 ## License
 
