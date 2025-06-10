@@ -3,6 +3,7 @@ import createElysiaApp from '<%= module %>'
 import { defineNitroPlugin } from 'nitropack/runtime'
 import { fromWebHandler } from 'h3'
 
+
 const isBun = typeof Bun !== "undefined"
 
 export default defineNitroPlugin(async (nitroApp) => {
@@ -14,37 +15,85 @@ export default defineNitroPlugin(async (nitroApp) => {
     event.context._elysiaApp = app
   })
 
-  const appPath = '<%= path %>'
-  if (appPath) {
-    const wrappedApp = new Elysia({ prefix: appPath })
+  <%# 处理 path 为对象形式的情况（多服务，API服务分离） %>
+  <% if (typeof path === 'object') { %>
+    <% const { host, port, prefix, isStart } = path %>
 
-    <%#
-      Fix missing Content-Type header when:
-        - Running the app in Bun
-        - The response is a string
-        - Content-Type is not provided
-    %>
-    <% if (fixBunPlainTextResponse) { %>
-    if (isBun) {
-      wrappedApp.onAfterHandle(({ response, set }) => {
-        if (typeof response === 'string' && !set.headers['content-type']) {
-          set.headers['content-type'] = 'text/plain;charset=utf-8'
-        }
-      })
-    }
+    <%# 如果配置了自动启动独立API服务 %>
+    <% if (isStart) { %>
+      // 自动启动独立的API服务
+      if (isBun) {
+        // 使用 Bun 启动服务
+        /* const server = Bun.serve({
+          port: <%= port %>,
+          fetch: app.fetch,
+        }) */
+        // 创建带有前缀的Elysia应用
+        <% if (prefix) { %>
+          const prefixedApp = new Elysia({
+            prefix: '<%= prefix %>'
+          })
+          prefixedApp.use(app)
+
+          prefixedApp.listen(<%= port %>, () => {
+            console.log(`🦊 Elysia API server is running bun at <%= host %>:<%= port %><%= prefix %>`)
+          })
+        <% } else { %>
+          // 没有前缀，直接启动
+          app.listen(<%= port %>, () => {
+            console.log(`🦊 Elysia API server is running bun at <%= host %>:<%= port %>`)
+          })
+        <% } %>
+      } else {
+        // 使用 Node.js 启动服务，适配Elysia WebStandard 适配器
+        // 创建带有前缀的Elysia应用
+        /* <% if (prefix) { %>
+          const prefixedApp = new Elysia({
+            prefix: '<%= prefix %>'
+          })
+          prefixedApp.use(app)
+          prefixedApp.listen(<%= port %>, () => {
+            console.log(`🦊 Elysia API server is running at node <%= host %>:<%= port %><%= prefix %>`)
+          })
+        <% } else { %>
+          // 没有前缀，直接启动
+          app.listen(<%= port %>, () => {
+            console.log(`🦊 Elysia API server is running at node <%= host %>:<%= port %>`)
+          })
+        <% } %> */
+      }
     <% } %>
 
-    wrappedApp.use(app)
-
-    nitroApp.h3App.stack.unshift({
-      route: appPath,
-      <%#
-        TODO See if Elysia can be configured to not return a response
-        If the handle does not return a response, h3 will move to the next route in stack.
-        If we can do this then we can register Elysia as '/' route
-        https://h3.unjs.io/guide/app#registering-event-handlers
-      %>
-      handler: fromWebHandler(wrappedApp.handle),
+    // 将API服务的URL注入到全局上下文中，供客户端插件使用
+    nitroApp.hooks.hook('request', (event) => {
+      event.context._elysiaApiUrl = '<%= host %>:<%= port %>'
+      event.context._elysiaApiPrefix = '<%= prefix %>'
     })
-  }
+
+  <%# 处理 path 为字符串形式的情况（单服务） %>
+  <% } else if (path) { %>
+    const appPath = '<%= path %>'
+    if (appPath) {
+      const wrappedApp = new Elysia({ prefix: appPath })
+
+      <%# Fix missing Content-Type header when: - Running the app in Bun - The response is a string - Content-Type is not provided %>
+      <% if (fixBunPlainTextResponse) { %>
+        if (isBun) {
+          wrappedApp.onAfterHandle(({ response, set }) => {
+            if (typeof response === 'string' && !set.headers['content-type']) {
+              set.headers['content-type'] = 'text/plain;charset=utf-8'
+            }
+          })
+        }
+      <% } %>
+
+      wrappedApp.use(app)
+
+      nitroApp.h3App.stack.unshift({
+        route: appPath,
+        <%# TODO See if Elysia can be configured to not return a response If the handle does not return a response, h3 will move to the next route in stack. If we can do this then we can register Elysia as '/' route https://h3.unjs.io/guide/app#registering-event-handlers %>
+        handler: fromWebHandler(wrappedApp.handle),
+      })
+    }
+  <% } %>
 })

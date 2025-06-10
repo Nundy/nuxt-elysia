@@ -110,6 +110,8 @@ export interface ModuleOptions {
   module: string
   /**
    * Specifies the path to mount the Elysia app.
+   * 
+   * 对象形式（多服务,分离）：{host, port, prefix, isStart}，表示Elysia作为独立服务，Elysia挂载到Nitro服务器上，可完全发挥出Elysia的性能
    *
    * Set to empty string (`''`) to disable mounting the Elysia app.
    *
@@ -200,6 +202,19 @@ export default defineNuxtConfig({
     path: import.meta.dev ? '/_api' : ''
   }
 })
+```
+
+```ts
+nuxtElysia: {
+  path: process.env.NODE_ENV === 'production'
+    ? {
+        host: 'http://localhost',
+        port: 4000,
+        prefix: '/_api',
+        isStart: true,
+      }
+    : '/_api',
+}
 ```
 
 This is useful if you only want to mount the Elysia app in development setup

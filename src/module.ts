@@ -3,6 +3,20 @@ import { defineNuxtModule, createResolver, addServerPlugin, addPlugin, addTempla
 import ejs from 'ejs'
 import { name, version } from '../package.json'
 
+/**
+ * 独立的API服务的路径配置选项
+ */
+export interface PathOptions {
+  /** API服务的主机地址，例如 'http://localhost' */
+  host: string
+  /** API服务的端口，例如 4000 */
+  port: number
+  /** API路径前缀，例如 '_api' */
+  prefix: string
+  /** 是否自动启动独立的API服务 */
+  isStart?: boolean
+}
+
 export interface ModuleOptions {
   /**
    * Specifies the module that exports the Elysia app factory function.
@@ -17,11 +31,15 @@ export interface ModuleOptions {
   /**
    * Specifies the path to mount the Elysia app.
    *
+   * 可以是以下两种形式：
+   * 1. 字符串形式（单服务）：例如 '_api'，表示将Elysia挂载到Nitro服务器上
+   * 2. 对象形式（多服务,分离）：{host, port, prefix, isStart}，表示Elysia作为独立服务，Elysia挂载到Nitro服务器上，可完全发挥出Elysia的性能
+   *
    * Set to empty string (`''`) to disable mounting the Elysia app.
    *
    * Default: `/_api`
    */
-  path: string
+  path: string | PathOptions
   /**
    * Whether to enable Eden Treaty plugin.
    *
@@ -101,7 +119,9 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     // Register client plugin
-    if (_options.path && _options.treaty) {
+    if ((_options.path && typeof _options.path === 'string')
+      || (typeof _options.path === 'object' && _options.path.prefix)
+      || (_options.path && _options.treaty)) {
       const tmpl = addTemplate({
         filename: './nuxt-elysia/client-plugin.ts',
         getContents: () => renderTemplate('client-plugin', {

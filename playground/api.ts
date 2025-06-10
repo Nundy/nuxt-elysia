@@ -1,7 +1,9 @@
 import { Elysia } from 'elysia'
+import { swagger } from '@elysiajs/swagger'
 
 export default async () => {
   const app = new Elysia()
+    .use(swagger())
     .get('/plaintext', () => 'Hello world!')
     .get('/html', ({ set }) => {
       set.headers['content-type'] = 'text/html'

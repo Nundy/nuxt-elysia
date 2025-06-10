@@ -19,26 +19,53 @@ export default defineNuxtPlugin(() => {
   const event = useRequestEvent()
   const appConfig = useAppConfig()
 
-  <% if (requestHeaders && requestHeaders.length > 0) { %>
+<% if (requestHeaders && requestHeaders.length > 0) { %>
   const requestHeaders = useRequestHeaders([
-    <% for (const header of requestHeaders) { %>
+  <% for (const header of requestHeaders) { %>
     '<%= header %>',
-    <% } %>
-  ])
   <% } %>
+  ])
+<% } %>
 
   const api = treaty<ElysiaApp>(
-    // In server-side: use _elysiaApp from event context
-    // In client-side: make the base URL from window origin + base URL + app path
-    event?.context._elysiaApp ?? (() => {
-      const runtimeConfig = useRuntimeConfig()
-      return window.location.origin + runtimeConfig.app.baseURL + '<%= path.slice(1) %>'
+    // 根据不同环境和配置决定API的目标地址
+    (() => {
+      // SSR服务端渲染时
+      if (process.server) {
+        // console.log('server')
+        // 多服务，API服务分离，如果上下文中有独立API服务的URL信息，则使用它
+        if (event?.context._elysiaApiUrl) {
+          // console.log(`${event.context._elysiaApiUrl}${event.context._elysiaApiPrefix || ''}`)
+          return `${event.context._elysiaApiUrl}${event.context._elysiaApiPrefix || ''}`
+        }
+        // 单服务：如果上下文中有Elysia应用实例，则使用它
+        if (event?.context._elysiaApp) {
+          // console.log('event.context._elysiaApp')
+          return event.context._elysiaApp
+        }
+      }
+
+      // SPA客户端渲染时
+      if (process.client) {
+        // console.log('client')
+        const runtimeConfig = useRuntimeConfig()
+<% if (typeof path === 'object') { %>
+        // 多服务，API服务分离，使用配置的主机和端口
+        return '<%= path.host %>:<%= path.port %><%= path.prefix || "" %>'
+<% } else { %>
+        // 单服务：使用当前域名加上路径
+        return window.location.origin + runtimeConfig.app.baseURL + '<%= path.slice(1) %>'
+<% } %>
+      }
+
+      // 默认情况下返回空字符串（应该不会走到这里）
+      return ''
     })(),
     {
       headers: {
-        <% if (requestHeaders && requestHeaders.length > 0) { %>
+<% if (requestHeaders && requestHeaders.length > 0) { %>
         ...requestHeaders,
-        <% } %>
+<% } %>
         ...appConfig.treatyConfig?.headers,
       },
       ...appConfig.treatyConfig,

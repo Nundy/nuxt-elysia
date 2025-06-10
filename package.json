@@ -8,6 +8,7 @@
   "exports": {
     ".": {
       "types": "./dist/types.d.ts",
+      "bun": "./dist/bun/index.js",
       "import": "./dist/module.mjs",
       "require": "./dist/module.cjs"
     }
@@ -20,12 +21,13 @@
   "scripts": {
     "prepack": "nuxt-module-build build",
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
-    "dev": "nuxi dev playground",
-    "dev:bun": "bun --bun nuxi dev playground",
-    "dev:build": "nuxi build playground",
-    "dev:build:bun": "NITRO_PRESET=bun nuxi build playground",
+    "dev": "nuxi dev playground --dotenv .env.local",
+    "dev:bun": "bun --bun nuxi dev playground --dotenv .env.local",
+    "dev:build": "nuxi build playground --dotenv .env.production",
+    "dev:build:bun": "NITRO_PRESET=bun nuxi build playground --dotenv .env.production",
     "dev:start": "node playground/.output/server/index.mjs",
     "dev:start:bun": "bun playground/.output/server/index.mjs",
+    "dev:start:bun:api": "bun api-server-bun.js",
     "lint": "eslint .",
     "test": "vitest",
     "test:bun": "bun test bun",
