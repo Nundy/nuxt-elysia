@@ -9,6 +9,7 @@ on:
       - 'src/**/*.ts'
       - 'src/**/*.ejs'
       - 'src/**/*.json'
+      - 'README.md'
   # pull_request:
   #   branches:
   #     - main
@@ -30,9 +31,9 @@ jobs:
       # - run: bun test:types
 
       - name: Publish to npm
-        run: npm publish --access public  # 发布公开包
+        run: npm publish --provenance --access public  # 发布公开包
         env:
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}  # 引用配置的 Token
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}  # 引用配置的 Token
       
 
   # test:
