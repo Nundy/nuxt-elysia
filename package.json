@@ -1,6 +1,6 @@
 {
   "name": "@whispering/nuxt-elysia",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": false,
   "description": "Mount Elysia app in Nuxt",
   "repository": {
