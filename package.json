@@ -1,5 +1,5 @@
 {
-  "name": "@nundy/nuxt-elysia",
+  "name": "@whispering/nuxt-elysia",
   "version": "0.3.0",
   "private": false,
   "description": "Mount Elysia app in Nuxt",
