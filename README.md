@@ -30,11 +30,11 @@ Install the package:
 
 ```
 # Bun
-bun add nuxt-elysia -D
+bun add @whispering/nuxt-elysia -D
 bun add elysia @elysiajs/eden
 
 # NPM
-npm install nuxt-elysia --save-dev
+npm install @whispering/nuxt-elysia --save-dev
 npm install elysia @elysiajs/eden
 ```
 
