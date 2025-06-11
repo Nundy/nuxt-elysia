@@ -1,16 +1,17 @@
-# nuxt-elysia-custom
-[tkesgar/nuxt-elysia]: https://github.com/tkesgar/nuxt-elysia
-## thanks
-## fork from[tkesgar/nuxt-elysia][tkesgar/nuxt-elysia]
+![en_flag](https://flagcdn.com/w20/gb.png) [English](README.md) | 
+![cn_flag](https://flagcdn.com/w20/cn.png) [简体中文](README.zh-CN.md)
 
-> Use Elysia app in Nuxt;
+> Use Elysia app in Nuxt (Multi-Service, Single Service)
+
+[tkesgar/nuxt-elysia]: https://github.com/tkesgar/nuxt-elysia
+fork from >> [tkesgar/nuxt-elysia][tkesgar/nuxt-elysia]
 
 ## Features
 
 - **Directly mount Elysia in Nuxt**
-  - Simplify development setup (you do not have to run Elysia app server
-    separately)
-  - Simplify deployment (deploy only one server instead of two servers)
+  - Simplify development setup (you do not have to run Elysia app server separately)
+  - Simplify deployment (deploy only one server)
+  - Support multi-service (fully unleash its performance)
 - **Eden Treaty integration**
   - Full Eden Treaty features (end-to-end type safety, lightweight size)
   - **Isomorphic client**: Eden Treaty works in both server-side and client-
@@ -56,7 +57,7 @@ Add to modules list in `nuxt.config.ts`:
 export default defineNuxtConfig({
   modules: [
     // ...
-    "nuxt-elysia",
+    "@whispering/nuxt-elysia",
   ],
 });
 ```
@@ -115,13 +116,15 @@ export interface ModuleOptions {
   /**
    * Specifies the path to mount the Elysia app.
    * 
-   * 对象形式（多服务,分离）：{host, port, prefix, isStart}，表示Elysia作为独立服务，Elysia挂载到Nitro服务器上，可完全发挥出Elysia的性能
+   * Configuration Options for Elysia API Services Supports two modes:
+   * 1. ​​String Format (Single Service), Example: '_api', Description: Mounts Elysia onto the Nitro server.
+   * 2. Object Format (Multi-Service, Standalone)​​, Example: { host, port, prefix, isStart }, Description: Runs Elysia as a standalone service to fully unleash its performance.
    *
    * Set to empty string (`''`) to disable mounting the Elysia app.
    *
    * Default: `/_api`
    */
-  path: string;
+  path: string | PathOptions;
   /**
    * Whether to enable Eden Treaty plugin.
    *
@@ -152,6 +155,28 @@ export interface ModuleOptions {
    * Default: `['Cookie']`
    */
   treatyRequestHeaders: string[] | false;
+}
+
+/**
+ * ​​Parameters for Standalone API Service:
+ */
+export interface PathOptions {
+  /**
+   * API service host address (e.g., 'http://localhost').
+   */
+  host: string;
+  /**
+   * API service port number (e.g., 4000).
+   */
+  port: number;
+  /**
+   * API path prefix (e.g., '_api').
+   */
+  prefix: string;
+  /**
+   * Whether to automatically start the standalone API service (Boolean value).
+   */
+  isStart?: boolean;
 }
 ````
 

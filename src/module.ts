@@ -4,16 +4,24 @@ import ejs from 'ejs'
 import { name, version } from '../package.json'
 
 /**
- * 独立的API服务的路径配置选项
+ * ​​Parameters for Standalone API Service:
  */
 export interface PathOptions {
-  /** API服务的主机地址，例如 'http://localhost' */
+  /**
+   * API service host address (e.g., 'http://localhost').
+   */
   host: string
-  /** API服务的端口，例如 4000 */
+  /**
+   * API service port number (e.g., 4000).
+   */
   port: number
-  /** API路径前缀，例如 '_api' */
+  /**
+   * API path prefix (e.g., '_api').
+   */
   prefix: string
-  /** 是否自动启动独立的API服务 */
+  /**
+   * Whether to automatically start the standalone API service (Boolean value).
+   */
   isStart?: boolean
 }
 
@@ -31,9 +39,9 @@ export interface ModuleOptions {
   /**
    * Specifies the path to mount the Elysia app.
    *
-   * 可以是以下两种形式：
-   * 1. 字符串形式（单服务）：例如 '_api'，表示将Elysia挂载到Nitro服务器上
-   * 2. 对象形式（多服务,分离）：{host, port, prefix, isStart}，表示Elysia作为独立服务，Elysia挂载到Nitro服务器上，可完全发挥出Elysia的性能
+   * Configuration Options for Elysia API Services Supports two modes:
+   * 1. ​​String Format (Single Service), Example: '_api', Description: Mounts Elysia onto the Nitro server.
+   * 2. Object Format (Multi-Service, Standalone)​​, Example: { host, port, prefix, isStart }, Description: Runs Elysia as a standalone service to fully unleash its performance.
    *
    * Set to empty string (`''`) to disable mounting the Elysia app.
    *
